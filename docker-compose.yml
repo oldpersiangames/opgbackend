@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+    app:
+        # build:
+        #     context: ./
+        #     dockerfile: Dockerfile
+        image: ghcr.io/oldpersiangames/opgbackend:main
+        env_file:
+            - path: ./.env
+              required: true
+        restart: unless-stopped
+        ports:
+            # - 8000:80
+            - 443:443
+        networks:
+            - app-network
+        volumes:
+            - /opgactions:/opgactions
+            - /etc/letsencrypt/live/backend.oldpersiangames.org/fullchain.pem:/opt/docker/etc/nginx/ssl/server.crt
+            - /etc/letsencrypt/live/backend.oldpersiangames.org/privkey.pem:/opt/docker/etc/nginx/ssl/server.key
+    db:
+        image: mysql:8.3
+        restart: unless-stopped
+        command: --default-authentication-plugin=mysql_native_password
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_DATABASE: opg
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_PASSWORD: 123456
+            MYSQL_USER: opg
+        volumes:
+            - dbdata:/var/lib/mysql
+        networks:
+            - app-network
+    opgbot:
+        image: ghcr.io/oldpersiangames/opgbot:main
+        restart: unless-stopped
+        env_file:
+            - path: ./.env
+              required: true
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
+volumes:
+    dbdata:
+        driver: local
