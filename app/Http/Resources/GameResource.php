@@ -24,6 +24,8 @@ class GameResource extends JsonResource
                 $types[] = 'subtitle';
             if ($game['iranian'] ?? false == true)
                 $types[] = 'iranian';
+            if ($game['collection'] ?? false == true)
+                $types[] = 'collection';
         }
         $types = array_values(array_unique($types));
 

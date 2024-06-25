@@ -18,7 +18,6 @@ return new class extends Migration
 
             $table->json('games');
 
-            $table->json('photos')->nullable();
             $table->boolean('selling')->default(false);
 
             $table->string('title_fa')->nullable();
