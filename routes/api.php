@@ -4,6 +4,7 @@ use App\Http\Controllers\CICDController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\LostGameController;
 use App\Http\Controllers\PublicApiController;
 use App\Http\Controllers\TGFileController;
 use App\Http\Controllers\UserController;
@@ -52,4 +53,8 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::apiResource('items', ItemController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('games', GameController::class);
+    Route::get('lost-games', [LostGameController::class, 'index']);
+    Route::post('lost-games', [LostGameController::class, 'store']);
+    Route::post('lost-games/rename', [LostGameController::class, 'rename']);
+    Route::delete('lost-games/{filename}', [LostGameController::class, 'destroy']);
 });
