@@ -88,13 +88,16 @@ class PublicApiController extends Controller
     public function nofuzy2()
     {
         $games = Game::with(['producers:title_fa', 'publishers:title_fa'])->latest()->get()->map(function ($game) {
+
+            $tgfiles = TGFile::whereIn('file_unique_id', $game->tgfiles)->orderByRaw("FIELD(file_unique_id, '" . implode("','", $game->tgfiles) . "')")->get(['file_id', 'file_name', 'file_size', 'date']);
+
             return [
                 'slug' => $game->slug,
                 'title_en' => $game->title_en ?? $game->games[0]['title_en'][0] ?? '',
                 'title_fa' => $game->title_fa ?? $game->games[0]['title_fa'][0] ?? '',
                 'producers' => $game->publishers,
                 'publisher' => $game->publishers,
-                'size' => $game->tgfiles ? collect($game->tgfiles)->sum('file_size') : 0,
+                'size' => $tgfiles->sum('file_size'),
             ];
         });
         return $games;
