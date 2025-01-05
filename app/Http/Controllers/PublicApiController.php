@@ -100,6 +100,7 @@ class PublicApiController extends Controller
                 'producers' => $game->publishers,
                 'publisher' => $game->publishers,
                 'size' => $tgfiles->sum('file_size'),
+                'size_mb' => $tgfiles->sum('file_size') / 1024 / 1024,
             ];
         });
         return $games;
