@@ -94,7 +94,7 @@ class PublicApiController extends Controller
                 'title_fa' => $game->title_fa ?? $game->games[0]['title_fa'][0] ?? '',
                 'producers' => $game->publishers,
                 'publisher' => $game->publishers,
-                'size' => $game->tgfiles->sum('file_size') ?? 0,
+                'size' => $game->tgfiles ? $game->tgfiles->sum('file_size') : 0,
             ];
         });
         return $games;
