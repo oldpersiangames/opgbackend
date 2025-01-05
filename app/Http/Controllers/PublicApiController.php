@@ -89,7 +89,7 @@ class PublicApiController extends Controller
     {
         $games = Game::with(['producers:title_fa', 'publishers:title_fa'])->latest()->get()->map(function ($game) {
             return [
-                'id' => $game->id,
+                'slug' => $game->slug,
                 'title_en' => $game->title_en ?? $game->games[0]['title_en'][0] ?? '',
                 'title_fa' => $game->title_fa ?? $game->games[0]['title_fa'][0] ?? '',
                 'producers' => $game->publishers,
