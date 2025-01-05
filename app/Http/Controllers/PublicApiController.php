@@ -89,7 +89,9 @@ class PublicApiController extends Controller
     {
         $games = Game::with(['producers:title_fa', 'publishers:title_fa'])->latest()->get()->map(function ($game) {
 
-            $tgfiles = TGFile::whereIn('file_unique_id', $game->tgfiles)->orderByRaw("FIELD(file_unique_id, '" . implode("','", $game->tgfiles) . "')")->get(['file_id', 'file_name', 'file_size', 'date']);
+            if ($game->tgfiles)
+                $tgfiles = TGFile::whereIn('file_unique_id', $game->tgfiles)->orderByRaw("FIELD(file_unique_id, '" . implode("','", $game->tgfiles) . "')")->get(['file_id', 'file_name', 'file_size', 'date']);
+            else $tgfiles = collect([]);
 
             return [
                 'slug' => $game->slug,
