@@ -84,4 +84,19 @@ class PublicApiController extends Controller
             echo $game->id . "," . ($game->title_en ?? $game->games[0]['title_en'][0] ?? '') . "," . ($game->title_fa ?? $game->games[0]['title_fa'][0] ?? '') . "," . ($game->publishers->first()?->title_fa[0] ?? '') . "\n";
         });
     }
+
+    public function nofuzy2()
+    {
+        $games = Game::with(['producers:title_fa', 'publishers:title_fa'])->latest()->get()->map(function ($game) {
+            return [
+                'id' => $game->id,
+                'title_en' => $game->title_en ?? $game->games[0]['title_en'][0] ?? '',
+                'title_fa' => $game->title_fa ?? $game->games[0]['title_fa'][0] ?? '',
+                'producers' => $game->publishers,
+                'publisher' => $game->publishers,
+                'size' => $game->tgfiles->sum('file_size'),
+            ];
+        });
+        return $games;
+    }
 }

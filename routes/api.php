@@ -34,6 +34,7 @@ Route::get('/items/{slug}', [PublicApiController::class, 'item']);
 Route::get('/users', [PublicApiController::class, 'users']);
 Route::get('/lost-games', [PublicApiController::class, 'lostGames']);
 Route::get('/nofuzy/1', [PublicApiController::class, 'nofuzy1']); // Temporary endpoint
+Route::get('/nofuzy/2', [PublicApiController::class, 'nofuzy2']); // Temporary endpoint
 
 
 /* CI/CD API */
