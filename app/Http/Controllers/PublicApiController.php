@@ -20,12 +20,14 @@ class PublicApiController extends Controller
     public function game($slug)
     {
         $game = Game::with(['producers:id,title_en,title_fa', 'publishers:id,title_en,title_fa', 'contributes:id,user_id,time,contributable_type,contributable_id,contribute,sort',  'contributes.user:id,name'])->where('slug', $slug)->firstOrFail();
-        $ids = "{" . implode(',', $game->tgfiles) . "}";
+        $ids = implode(',', array_map(function($id) {
+            return "'$id'";
+        }, $game->tgfiles));
 
         $tgfiles = TGFile::whereIn('file_unique_id', $game->tgfiles)
             ->orderByRaw("array_position(ARRAY[{$ids}], file_unique_id)")
             ->get(['file_id', 'file_name', 'file_size', 'date']);
-            
+
         $game->tgfiles = $tgfiles->toArray();
 
         $titles = [];
