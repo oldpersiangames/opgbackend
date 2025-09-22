@@ -12,7 +12,7 @@ class TGFileController extends Controller
      */
     public function index()
     {
-        return TGFile::orderBy('message_date', 'desc')->orderBy('date', 'desc')->get(['file_unique_id', 'file_name', 'file_size', 'date', 'message_date']);
+        return TGFile::orderByRaw('message_date IS NULL, message_date DESC')->orderBy('date', 'desc')->get(['file_unique_id', 'file_name', 'file_size', 'date', 'message_date']);
     }
 
     /**
