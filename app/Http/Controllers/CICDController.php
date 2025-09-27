@@ -14,8 +14,7 @@ class CICDController extends Controller
 {
     public function makeBackup(Request $request)
     {
-        if (hash('sha256', $request->key) != env('OPG_KEY_HASH'))
-            abort(403);
+    
 
         $backupPath = storage_path('app/opg-backups/opgbackend.sql');
 
@@ -27,7 +26,7 @@ class CICDController extends Controller
         );
 
         // Process::path('/opgactions/opg-backups')->run('mysqldump --skip-extended-insert --skip-dump-date -h' . env('DB_HOST') . ' -u' . env('DB_USERNAME') . ' -p' . env('DB_PASSWORD') . ' ' . env('DB_DATABASE') . ' > opgbackend.sql');
-        
+
         // Process::path('/opgactions/opg-backups')->run('git add .');
         // Process::path('/opgactions/opg-backups')->run('git commit -m "' . Carbon::now()->setTimezone('UTC')->toDateTimeString() . '"');
         // Process::path('/opgactions/opg-backups')->run('git push');
