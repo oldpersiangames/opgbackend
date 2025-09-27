@@ -19,10 +19,10 @@ class CICDController extends Controller
         $backupPath = storage_path('app/opg-backups/opgbackend.sql');
 
         Process::run(
-    'PGPASSWORD="' . env('DB_PASSWORD') . '" pg_dump ' .
-    '-h ' . env('DB_HOST') . ' ' .
-    '-U ' . env('DB_USERNAME') . ' ' .
-    env('DB_DATABASE') . ' > ' . $backupPath
+    'PGPASSWORD="' . config('database.pgsql.password') . '" pg_dump ' .
+    '-h ' . config('database.pgsql.host') . ' ' .
+    '-U ' . config('database.pgsql.username') . ' ' .
+    config('database.pgsql.database') . ' > ' . $backupPath
         );
 
         // Process::path('/opgactions/opg-backups')->run('mysqldump --skip-extended-insert --skip-dump-date -h' . env('DB_HOST') . ' -u' . env('DB_USERNAME') . ' -p' . env('DB_PASSWORD') . ' ' . env('DB_DATABASE') . ' > opgbackend.sql');
