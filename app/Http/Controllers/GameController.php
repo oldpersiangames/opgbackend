@@ -20,7 +20,7 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
-        return Game::latest()->get(['id', 'slug', 'title_fa', 'title_en', 'games'])->transform(function ($game) {
+        return Game::latest()->get(['id', 'status', 'slug', 'title_fa', 'title_en', 'games'])->transform(function ($game) {
             return [
                 'id' => $game->id,
                 'slug' => $game->slug,
