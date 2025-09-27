@@ -17,10 +17,20 @@ class CICDController extends Controller
         if (hash('sha256', $request->key) != env('OPG_KEY_HASH'))
             abort(403);
 
-        Process::path('/opgactions/opg-backups')->run('mysqldump --skip-extended-insert --skip-dump-date -h' . env('DB_HOST') . ' -u' . env('DB_USERNAME') . ' -p' . env('DB_PASSWORD') . ' ' . env('DB_DATABASE') . ' > opgbackend.sql');
-        Process::path('/opgactions/opg-backups')->run('git add .');
-        Process::path('/opgactions/opg-backups')->run('git commit -m "' . Carbon::now()->setTimezone('UTC')->toDateTimeString() . '"');
-        Process::path('/opgactions/opg-backups')->run('git push');
+        $backupPath = storage_path('app/opg-backups/opgbackend.sql');
+
+        Process::run(
+    'PGPASSWORD="' . env('DB_PASSWORD') . '" pg_dump ' .
+    '-h ' . env('DB_HOST') . ' ' .
+    '-U ' . env('DB_USERNAME') . ' ' .
+    env('DB_DATABASE') . ' > ' . $backupPath
+        );
+
+        // Process::path('/opgactions/opg-backups')->run('mysqldump --skip-extended-insert --skip-dump-date -h' . env('DB_HOST') . ' -u' . env('DB_USERNAME') . ' -p' . env('DB_PASSWORD') . ' ' . env('DB_DATABASE') . ' > opgbackend.sql');
+        
+        // Process::path('/opgactions/opg-backups')->run('git add .');
+        // Process::path('/opgactions/opg-backups')->run('git commit -m "' . Carbon::now()->setTimezone('UTC')->toDateTimeString() . '"');
+        // Process::path('/opgactions/opg-backups')->run('git push');
     }
 
     public function beforeIa(Request $request)
