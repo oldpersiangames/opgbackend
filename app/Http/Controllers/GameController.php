@@ -24,6 +24,7 @@ class GameController extends Controller
             return [
                 'id' => $game->id,
                 'slug' => $game->slug,
+                'status'=>$game->status,
                 'title_fa' => $game->title_fa ?? $game->games[0]['title_fa'][0] ?? '',
                 'title_en' => $game->title_en ?? $game->games[0]['title_en'][0] ?? '',
             ];
