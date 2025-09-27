@@ -63,7 +63,10 @@ class PublicApiController extends Controller
     public function item($slug)
     {
         $item = Item::with(['producers:slug,title_en,title_fa', 'publishers:slug,title_en,title_fa', 'contributes:user_id,contributable_type,contributable_id,contribute',  'contributes.user:id,name'])->where('slug', $slug)->firstOrFail();
-        $tgfiles = TGFile::whereIn('file_unique_id', $item->tgfiles)->orderByRaw("FIELD(file_unique_id, '" . implode("','", $item->tgfiles) . "')")->get(['file_id', 'file_name', 'file_size', 'date']);
+        $ids = implode(',', array_map(function($id) {
+            return "'$id'";
+        }, $item->tgfiles));
+        $tgfiles = TGFile::whereIn('file_unique_id', $item->tgfiles)->orderByRaw("array_position(ARRAY[{$ids}], file_unique_id)")->get(['file_id', 'file_name', 'file_size', 'date']);
         $item->tgfiles = $tgfiles->toArray();
 
         $photos = $item->getMedia()->map(function ($media) {
