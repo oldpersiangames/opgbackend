@@ -26,13 +26,12 @@ class CICDController extends Controller
         ];
 
         Process::env(['PGPASSWORD' => config('database.connections.pgsql.password')])->run($command);
-        // dd($result);
 
         // Process::path('/opgactions/opg-backups')->run('mysqldump --skip-extended-insert --skip-dump-date -h' . env('DB_HOST') . ' -u' . env('DB_USERNAME') . ' -p' . env('DB_PASSWORD') . ' ' . env('DB_DATABASE') . ' > opgbackend.sql');
 
-        // Process::path('/opgactions/opg-backups')->run('git add .');
-        // Process::path('/opgactions/opg-backups')->run('git commit -m "' . Carbon::now()->setTimezone('UTC')->toDateTimeString() . '"');
-        // Process::path('/opgactions/opg-backups')->run('git push');
+        Process::path(storage_path('app/opg-backups'))->run('git add .');
+        Process::path(storage_path('app/opg-backups'))->run('git commit -m "' . Carbon::now()->setTimezone('UTC')->toDateTimeString() . '"');
+        Process::path(storage_path('app/opg-backups'))->run('git push');
     }
 
     public function beforeIa(Request $request)
