@@ -14,12 +14,12 @@ class PublicApiController extends Controller
 {
     public function games()
     {
-        return GameResource::collection(Game::with(['producers:slug,title_fa,title_en', 'publishers:slug,title_fa,title_en'])->latest()->get());
+        return GameResource::collection(Game::where('status', 'published')->with(['producers:slug,title_fa,title_en', 'publishers:slug,title_fa,title_en'])->latest()->get());
     }
 
     public function game($slug)
     {
-        $game = Game::with(['producers:id,title_en,title_fa', 'publishers:id,title_en,title_fa', 'contributes:id,user_id,time,contributable_type,contributable_id,contribute,sort',  'contributes.user:id,name'])->where('slug', $slug)->firstOrFail();
+        $game = Game::where('status', 'published')->with(['producers:id,title_en,title_fa', 'publishers:id,title_en,title_fa', 'contributes:id,user_id,time,contributable_type,contributable_id,contribute,sort',  'contributes.user:id,name'])->where('slug', $slug)->firstOrFail();
         $ids = implode(',', array_map(function($id) {
             return "'$id'";
         }, $game->tgfiles));
@@ -37,7 +37,7 @@ class PublicApiController extends Controller
             array_push($titles, ...$g['title_en']);
         }
 
-        $relatedGames = Game::with(['producers:id,title_en,title_fa', 'publishers:id,title_en,title_fa'])
+        $relatedGames = Game::where('status', 'published')->with(['producers:id,title_en,title_fa', 'publishers:id,title_en,title_fa'])
             ->whereNot('id', $game->id)
             ->where(function (Builder $query) use ($titles) {
                 $query->whereIn('title_en', $titles);
@@ -85,7 +85,7 @@ class PublicApiController extends Controller
     public function nofuzy1()
     {
         header("Content-type: text/csv");
-        $games = Game::with(['producers:slug,title_fa,title_en', 'publishers:slug,title_fa,title_en'])->latest()->get();
+        $games = Game::where('status', 'published')->with(['producers:slug,title_fa,title_en', 'publishers:slug,title_fa,title_en'])->latest()->get();
         echo "id,tilte_en,title_fa,publisher\n";
         $games->each(function ($game) {
             echo $game->id . "," . ($game->title_en ?? $game->games[0]['title_en'][0] ?? '') . "," . ($game->title_fa ?? $game->games[0]['title_fa'][0] ?? '') . "," . ($game->publishers->first()?->title_fa[0] ?? '') . "\n";
@@ -94,7 +94,7 @@ class PublicApiController extends Controller
 
     public function nofuzy2()
     {
-        $games = Game::with(['producers:title_fa', 'publishers:title_fa'])->orderBy('id')->get()->map(function ($game) {
+        $games = Game::where('status', 'published')->with(['producers:title_fa', 'publishers:title_fa'])->orderBy('id')->get()->map(function ($game) {
 
             if ($game->tgfiles)
                 $tgfiles = TGFile::whereIn('file_unique_id', $game->tgfiles)->orderByRaw("FIELD(file_unique_id, '" . implode("','", $game->tgfiles) . "')")->get(['file_id', 'file_name', 'file_size', 'date']);

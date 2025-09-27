@@ -28,7 +28,7 @@ class CICDController extends Controller
         if (hash('sha256', $request->key) != env('OPG_KEY_HASH'))
             abort(403);
 
-        $games = Game::whereNull('ia_id')->where('selling', false)
+        $games = Game::where('status', 'published')->whereNull('ia_id')->where('selling', false)
             ->whereNot('slug', 'grand-theft-auto-san-andreas-oldpersiangames')
             ->get(['slug', 'tgfiles', 'games', 'title_en'])->map(function ($game) {
                 $tgfiles = TGFile::whereIn('file_unique_id', $game->tgfiles)->orderByRaw("FIELD(file_unique_id, '" . implode("','", $game->tgfiles) . "')")->get(['file_name', 'file_size', 'file_id', 'file_unique_id', 'date']);
@@ -64,7 +64,7 @@ class CICDController extends Controller
         if ($request->has('filesJSON'))
             $value['files'] = $request->filesJSON;
 
-        $item = Game::where('slug', $request->slug)->whereNull('ia_id')->first();
+        $item = Game::where('status', 'published')->where('slug', $request->slug)->whereNull('ia_id')->first();
         if (!$item) $item = Item::where('slug', $request->slug)->whereNull('ia_id')->first();
 
         $item->update($value);
